@@ -13,7 +13,26 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Leave `OPENROUTER_API_KEY` empty to forward the caller's `Authorization` header. That is the same OpenRouter key the caller already uses. Set the variable if this server should store one key and send it for every request.
+Leave `OPENROUTER_API_KEY` empty to forward the caller's `Authorization` header. That is the same OpenRouter key the caller already uses.
+
+## Add the key later
+
+On the server, from `/opt/llm-gateway`:
+
+```bash
+printf 'OPENROUTER_API_KEY=%s\n' 'YOUR_KEY' > .env
+chmod 600 .env
+docker compose up -d --force-recreate
+```
+
+After that, the server sends this key on every request. Callers can omit `Authorization`. The `.env` file stays on the host and is not committed.
+
+To go back to forwarding the caller's key, empty the variable and recreate:
+
+```bash
+printf 'OPENROUTER_API_KEY=\n' > .env
+docker compose up -d --force-recreate
+```
 
 ## Call
 
