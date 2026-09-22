@@ -1,0 +1,9 @@
+services:
+  gateway:
+    build: .
+    image: llm-gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
