@@ -1,8 +1,7 @@
 #!/bin/sh
 set -e
 if [ -n "${OPENROUTER_API_KEY}" ]; then
-    export PROXY_AUTHORIZATION="Bearer ${OPENROUTER_API_KEY}"
+    export SERVER_AUTHORIZATION="Bearer ${OPENROUTER_API_KEY}"
 else
-    # Left for nginx. This file is sourced before envsubst.
-    export PROXY_AUTHORIZATION='$http_authorization'
+    export SERVER_AUTHORIZATION=""
 fi

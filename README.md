@@ -13,9 +13,9 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Leave `OPENROUTER_API_KEY` empty to forward the caller's `Authorization` header. That is the same OpenRouter key the caller already uses.
+The caller's `Authorization` header is sent to OpenRouter when it is present. If the caller omits it and `OPENROUTER_API_KEY` is set on the server, that stored key is used instead.
 
-## Add the key later
+## Add a server key later
 
 On the server, from `/opt/llm-gateway`:
 
@@ -25,9 +25,9 @@ chmod 600 .env
 docker compose up -d --force-recreate
 ```
 
-After that, the server sends this key on every request. Callers can omit `Authorization`. The `.env` file stays on the host and is not committed.
+Callers can still send their own key. The stored key is only the fallback. The `.env` file stays on the host and is not committed.
 
-To go back to forwarding the caller's key, empty the variable and recreate:
+To remove the fallback:
 
 ```bash
 printf 'OPENROUTER_API_KEY=\n' > .env
@@ -48,5 +48,5 @@ Chat requests use the same path as OpenRouter, for example `/v1/chat/completions
 1. Nginx in Docker listens on port 80.
 2. `/v1/` is proxied to `https://openrouter.ai/api/v1/` with the `Host` header set to `openrouter.ai`.
 3. `/` returns 404.
-4. The image entrypoint uses a stored key when `OPENROUTER_API_KEY` is set, and otherwise keeps the caller's header.
+4. A caller key wins. A key in `.env` is used only when the request has no `Authorization` header.
 5. The same compose file is running on each server under `/opt/llm-gateway`. The API key is not in this repository.
