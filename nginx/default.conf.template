@@ -16,18 +16,11 @@ server {
 
     location /v1/ {
         proxy_pass https://openrouter.ai/api/v1/;
-        proxy_ssl_server_name on;
-        proxy_ssl_name openrouter.ai;
-        proxy_http_version 1.1;
-        proxy_set_header Host openrouter.ai;
-        proxy_set_header Authorization $upstream_authorization;
-        proxy_set_header Content-Type $content_type;
-        proxy_set_header HTTP-Referer $http_referer;
-        proxy_set_header X-Title $http_x_title;
-        proxy_set_header Connection "";
-        proxy_buffering off;
-        proxy_cache off;
-        proxy_read_timeout 3600s;
-        proxy_send_timeout 3600s;
+        include /etc/nginx/proxy-params.conf;
+    }
+
+    location /api/v1/ {
+        proxy_pass https://openrouter.ai/api/v1/;
+        include /etc/nginx/proxy-params.conf;
     }
 }

@@ -1,6 +1,6 @@
 # llm-gateway
 
-A small Docker proxy. Callers send OpenRouter-style `/v1/...` requests to this server. The server forwards only those paths to `https://openrouter.ai/api/v1/` and returns the response. Any other path, including `/`, is a 404.
+A small Docker proxy. Callers send OpenRouter-style requests to `/v1/...` or `/api/v1/...`. The server forwards only those paths to `https://openrouter.ai/api/v1/` and returns the response. Any other path, including `/`, is a 404.
 
 ## What it does not do
 
@@ -37,16 +37,16 @@ docker compose up -d --force-recreate
 ## Call
 
 ```bash
-curl http://SERVER/v1/models \
+curl http://SERVER/api/v1/models \
   -H "Authorization: Bearer $OPENROUTER_API_KEY"
 ```
 
-Chat requests use the same path as OpenRouter, for example `/v1/chat/completions`. Streaming responses are passed through.
+`/v1/models` is the same list. Chat requests use `/api/v1/chat/completions` or `/v1/chat/completions`. Streaming responses are passed through.
 
 ## How this was set up
 
 1. Nginx in Docker listens on port 80.
-2. `/v1/` is proxied to `https://openrouter.ai/api/v1/` with the `Host` header set to `openrouter.ai`.
+2. `/v1/` and `/api/v1/` are proxied to `https://openrouter.ai/api/v1/` with the `Host` header set to `openrouter.ai`.
 3. `/` returns 404.
 4. A caller key wins. A key in `.env` is used only when the request has no `Authorization` header.
 5. The same compose file is running on each server under `/opt/llm-gateway`. The API key is not in this repository.
